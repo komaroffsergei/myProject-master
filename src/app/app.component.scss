@@ -1,0 +1,47 @@
+//img
+ion-img {
+  width:35px!important;
+  height:35px!important;
+  float: left;
+  display: flex;
+}
+ion-menu-toggle {
+  float: left;
+  white-space: break-spaces;
+  //line-break: ;
+}
+
+ion-label {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.mat-icon.mat-ligature-font[fontIcon]::before {
+  content: attr(fontIcon);
+}
+
+.mat-icon {
+  height: 24px;
+  width: 24px;
+
+}
+
+//.example-spacer {
+//  flex: 1 0 auto;
+//}
+
+/*.image-radius {
+  border-radius: 10px;  !* Скругление углов изображения *!
+  border: 5px solid #fff; !* Цвет и ширину рамки *!
+  box-shadow: 2px 1px 5px #999999; !* Цвет и размер тени *!
+}*/
+
+/*
+ion-grid {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  border: 3px solid #d2d5d5;
+
+}
+*/

@@ -1,0 +1,137 @@
+
+
+      {
+        id: 'completed', name: 'Completed', field: 'completed', type: FieldType.number, sortable: true, minWidth: 100,
+        formatter: customEnableButtonFormatter,
+        onCellClick: (e, args) => {
+          this.toggleCompletedProperty(args && args.dataContext);
+        }
+      },
+      {
+        id: 'description', name: 'ID Пациента', field: 'description', filterable: true, sortable: true, minWidth: 80,
+        type: FieldType.string,
+        filter: {
+          model: CustomInputFilter, // create a new instance to make each Filter independent from each other
+          enableTrimWhiteSpace: true // or use global "enableFilterTrimWhiteSpace" to trim on all Filters
+        }
+      },
+
+      {
+        id: 'complete',
+        name: 'Дата рождения',
+        field: 'percentComplete',
+        formatter: Formatters.percentCompleteBar,
+        minWidth: 70,
+        type: FieldType.number,
+        sortable: true,
+        filterable: true,
+        filter: {model: Filters.compoundInputNumber}
+      },
+      {
+        id: 'Услуга (исследование)',
+        name: 'Услуга (исследование)',
+        field: 'start',
+        formatter: Formatters.dateIso,
+        sortable: true,
+        minWidth: 75,
+        type: FieldType.date,
+        filterable: true,
+        filter: {model: Filters.compoundDate}
+      },
+      {
+        id: 'usDateShort', name: 'Запись', field: 'usDateShort', sortable: true, minWidth: 70, width: 70,
+        type: FieldType.string, filterable: true, filter: {model: Filters.compoundInputText}
+      },
+      // {
+      //   id: 'utcDate', name: 'UTC Date', field: 'utcDate', formatter: Formatters.dateTimeIsoAmPm, sortable: true, minWidth: 115,
+      //   type: FieldType.dateUtc, exportWithFormatter: true, outputType: FieldType.dateTimeIsoAmPm, filterable: true,
+      //   filter: {
+      //     model: Filters.compoundDate,
+      //     // override any of the Flatpickr options through "filterOptions"
+      //     // please note that there's no TSlint on this property since it's generic for any filter, so make sure you entered the correct filter option(s)
+      //     filterOptions: { minDate: 'today' } as FlatpickrOption
+      //   }
+      // },
+      {
+        id: 'effort-driven', name: 'Cito!', field: 'effortDriven.isEffort', minWidth: 85, maxWidth: 85,
+        type: FieldType.boolean,
+        sortable: true,
+        exportCustomFormatter: Formatters.complexObject,
+
+        // to pass multiple formatters, use the params property
+        // also these formatters are executed in sequence, so if you want the checkmark to work correctly, it has to be the last formatter defined
+        formatter: Formatters.multiple,
+        params: {formatters: [Formatters.complexObject, Formatters.checkmark]},
+
+        // when the "field" string includes the dot "." notation, the library will consider this to be a complex object and Filter accordingly
+        filterable: true,
+        filter: {
+          // We can also add HTML text to be rendered (any bad script will be sanitized) but we have to opt-in, else it will be sanitized
+          // enableRenderHtml: true,
+          // collection: [{ value: '', label: '' }, { value: true, label: 'True', labelPrefix: `<i class="fa fa-check"></i> ` }, { value: false, label: 'False' }],
+
+          collection: [{isEffort: '', label: ''}, {isEffort: true, label: 'True'}, {isEffort: false, label: 'False'}],
+          customStructure: {
+            value: 'isEffort',
+            label: 'label'
+          },
+          model: Filters.singleSelect,
+
+          // we could add certain option(s) to the "multiple-select" plugin
+          filterOptions: {autoAdjustDropHeight: true} as MultipleSelectOption,
+        }
+
+      },
+
+
+
+{
+        id: 'duration',
+        name: 'Фамилия И.О.',
+        field: 'duration',
+        sortable: true,
+        type: FieldType.number,
+        exportCsvForceToKeepAsString: true,
+        minWidth: 55,
+        filterable: true,
+        filter: {
+          collectionAsync: this.http.get<{ option: string; value: string; }[]>(URL_SAMPLE_COLLECTION_DATA),
+          // collectionFilterBy & collectionSortBy accept a single or multiple options
+          // we can exclude certains values 365 & 360 from the dropdown filter
+          collectionFilterBy: [{
+            property: 'value',
+            operator: OperatorType.notEqual,
+            value: 360
+          }, {
+            property: 'value',
+            operator: OperatorType.notEqual,
+            value: 365
+          }],
+          collectionSortBy: {
+            property: 'value',
+            sortDesc: true,
+            fieldType: FieldType.number
+          },
+          customStructure: {
+            value: 'value',
+            label: 'label',
+            optionLabel: 'value', // if selected text is too long, we can use option labels instead
+            labelSuffix: 'text',
+          },
+          collectionOptions: {
+            separatorBetweenTextLabels: ' ',
+            filterResultAfterEachPass: 'chain' // options are "merge" or "chain" (defaults to "chain")
+          },
+          model: Filters.multipleSelect,
+
+          // we could add certain option(s) to the "multiple-select" plugin
+          filterOptions: {
+            maxHeight: 250,
+            width: 175,
+
+            // if we want to display shorter text as the selected text (on the select filter itself, parent element)
+            // we can use "useSelectOptionLabel" or "useSelectOptionLabelToHtml" the latter will parse html
+            useSelectOptionLabelToHtml: true
+          } as MultipleSelectOption
+        }
+      },

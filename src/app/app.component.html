@@ -1,0 +1,149 @@
+
+
+
+<ion-app>
+
+  <!--Menu-->
+  <ion-menu contentId="main-content">
+    <!--Header menu-->
+    <ion-header>
+
+      <ion-menu-toggle *ngIf="authService.isLoggedIn()">
+        <ion-toolbar color="tertiary">
+          <ion-title [routerLink]="[APP_ROUTES.profile_page]">
+            Подтянуть ФИО
+            <p><a [routerLink]="['/login']">Logout</a></p>
+          </ion-title>
+        </ion-toolbar>
+      </ion-menu-toggle>
+
+      <ion-menu-toggle *ngIf="!authService.isLoggedIn()">
+        <ion-toolbar color="tertiary">
+          <ion-title>
+            Авторизуйся
+          </ion-title>
+        </ion-toolbar>
+      </ion-menu-toggle>
+
+
+    </ion-header>
+    <!--Content menu-->
+    <ion-content color="light" *ngIf="authService.isLoggedIn()">
+      <ion-list [inset]="true">
+        <ion-menu-toggle [routerLink]="[APP_ROUTES.schedule_page]">
+          <ion-label>
+            <ion-img
+              [src]="'assets/icon/mp-timetable32.png'">
+            </ion-img>
+            расписание
+          </ion-label>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle [routerLink]="[APP_ROUTES.bcp_page]">
+          <ion-label>
+            <ion-img
+              [src]="'assets/icon/mp-timetable32.png'">
+            </ion-img>
+            Blood Collection Places (BCP)
+          </ion-label>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle>
+          <ion-label>
+            <ion-img
+              [src]="'assets/icon/lab-service32.png'">
+            </ion-img>
+            Настройки проб и контейнеров
+          </ion-label>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle>
+          <ion-label>
+            <ion-img
+              [src]="'assets/icon/book32.png'">
+            </ion-img>
+            Справочники
+          </ion-label>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle>
+          <ion-label>
+            <ion-img
+              [src]="'assets/icon/report32.png'">
+            </ion-img>
+            Отчеты
+          </ion-label>
+        </ion-menu-toggle>
+
+        <ion-menu-toggle>
+          <ion-label>
+            <ion-img
+              [src]="'assets/icon/technocard-icon.svg'">
+            </ion-img>
+            Технологические карты
+          </ion-label>
+        </ion-menu-toggle>
+
+      </ion-list>
+
+    </ion-content>
+
+  </ion-menu>
+  <!--Page-->
+  <div class="ion-page" id="main-content">
+    <ion-header>
+      <ion-toolbar>
+        <ion-menu-toggle [routerLink]="[APP_ROUTES.schedule_page]">
+        <ion-buttons slot="start">
+          <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+
+            <ion-img
+              [src]="'assets/icon/menu.png'">
+            </ion-img>
+
+
+          <ion-title  *ngIf="authService.isLoggedIn()">АРМ Лаборанта</ion-title>
+          <ion-title  *ngIf="!authService.isLoggedIn()">Авторизуйся, блеать!</ion-title>
+        </ion-menu-toggle>
+      </ion-toolbar>
+    </ion-header>
+    <!--Content-->
+
+
+    <ion-content class="ion-padding">
+
+      <ion-router-outlet>
+
+      </ion-router-outlet>
+
+      <!--
+      <ion-grid>
+        <ion-row>
+          <ion-col>ID Пациента</ion-col>
+          <ion-col>№ пробы</ion-col>
+          <ion-col>Статус</ion-col>
+          <ion-col>Cito!</ion-col>
+          <ion-col>Биоматериал</ion-col>
+          <ion-col>Штрихкод</ion-col>
+          <ion-col>Взял пробу</ion-col>
+          <ion-col>Пункт забора</ion-col>
+          <ion-col>Тесты</ion-col>
+          <ion-col>Одобрил результат</ion-col>
+          <ion-col>Штрихкод</ion-col>
+          <ion-col>№ напр.</ion-col>
+          <ion-col>Медицинская организация</ion-col>
+          <ion-col>Фамилия врача</ion-col>
+          <ion-col>Регистрационный номер</ion-col>
+          <ion-col>Услуга (Исследование)</ion-col>
+        </ion-row>
+      </ion-grid>-->
+
+
+    </ion-content>
+
+  </div>
+
+
+</ion-app>
+

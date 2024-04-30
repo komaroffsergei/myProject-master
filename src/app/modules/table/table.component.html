@@ -1,0 +1,12 @@
+<div class="m-auto">
+  <angular-slickgrid gridId="grid1"
+                     [columnDefinitions]="columns"
+                     [gridOptions]="options"
+                     (onAngularGridCreated)="angularGridCreated($event)"
+                     (onGridStateChanged)="gridStateChanged($event)"
+                     (onBeforeGridDestroy)="beforeGridDestroy()"
+                     (onRowCountChanged)="rowCountChanged($event)"
+                     (onSelectedRowsChanged)="selectedRowsChanged($event)"
+                     [dataset]="data">
+  </angular-slickgrid>
+</div>
