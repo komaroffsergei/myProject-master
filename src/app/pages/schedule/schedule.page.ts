@@ -19,18 +19,27 @@ export class SchedulePage implements OnInit {
   @ViewChild('newModal') newModal: IonModal | any;
   @ViewChild('editModal') editModal: IonModal | any;
 
-  protected newItem: ScheduleDataView = {
-    id: 0,
-    patient_fio: 'Иванов Иван',
-    investigation_name: 'Investigation Name',
-    status: 'Status',
-    tape: 'Tape',
-    bar_code: '000000',
-    bcp_name: 'Bcp Name',
-    completed: 'yep',
-    deviation: 'Deviation',
-    patient_id: 'Patient ID',
-    date_direction: 'Date direction',
+  protected newItem: ScheduleDataView = this.defaultItem();
+  protected editItem: ScheduleDataView | null = null;
+  protected formError = '';
+
+  defaultItem(): ScheduleDataView {
+    return {id:0,patient_fio:'Демонстрационный участник',investigation_name:'Общий анализ крови',
+      status:'Запланировано',tape:'Пробирка EDTA',bar_code:'DEMO200001',bcp_name:'Демонстрационный пункт № 1',
+      completed:false,deviation:'Нет',patient_id:'DEMO-NEW',date_direction:'2026-09-07T09:30:00Z'};
+  }
+
+  openNew() { this.newItem = this.defaultItem(); this.formError = ''; }
+  async openEdit() {
+    if (!this.tableService.selectedItem) return;
+    this.editItem = {...this.tableService.selectedItem}; this.formError = '';
+    await this.editModal.present();
+  }
+  isValid(item: ScheduleDataView | null): boolean {
+    return !!item && ['patient_fio','investigation_name','status','patient_id'].every(key => {
+      const value = String(item[key as keyof ScheduleDataView] || '').trim();
+      return value.length > 0 && value.length <= 120;
+    }) && Number.isFinite(Date.parse(item.date_direction));
   }
 
   constructor(public tableService: ScheduleTableService) {
@@ -47,14 +56,12 @@ export class SchedulePage implements OnInit {
     this.gridData = this.tableService.getTableData()
   }
 
-  cancel() {
-    this.newModal.dismiss(null, 'cancel');
-  }
+  cancel(mode: 'new'|'edit') { (mode === 'new' ? this.newModal : this.editModal).dismiss(null, 'cancel'); }
 
   confirm(item: ScheduleDataView | null, mode: TableRowCRUDMode) {
-    if (!item) {
-      return;
-    }
+    if (!this.isValid(item)) { this.formError = 'Заполните обязательные поля и корректную дату.'; return; }
+    if (!item) return;
+    if (mode === 'new' && this.tableService.angularGrid.dataView.getLength() >= 500) { this.formError = 'В демо доступно до 500 записей. Сбросьте свой пример.'; return; }
     const opts: TableRowOpts = {
       item: item,
       mode: mode

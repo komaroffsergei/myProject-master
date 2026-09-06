@@ -19,8 +19,7 @@ const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    canActivate: [AuthGuard],
-    loadChildren: async () => (await import('./pages/main/main.module')).MainPageModule
+    redirectTo: APP_ROUTES.schedule_page
   },
   {
     path: APP_ROUTES.login_page,

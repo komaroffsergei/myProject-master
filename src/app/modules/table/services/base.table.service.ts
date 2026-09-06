@@ -29,16 +29,12 @@ export interface ScheduleDataView {
   bar_code: string;
   bcp_name: string;
   date_direction: string;
-  completed: string;
+  completed: boolean;
   patient_id: string;
   patient_fio: string;
 }
 
-function randomBetween(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-const NB_ITEMS = 1500;
+const NB_ITEMS = 180;
 
 export class BaseTableService implements TableServiceInterface {
   constructor(protected  http: HttpClient, protected  translate: TranslateService, protected  alertController: AlertController) {
@@ -96,45 +92,25 @@ export class BaseTableService implements TableServiceInterface {
 
   private _dataset: ScheduleDataView[] = [];
 
-  getTableData(): any[] {
-    this._dataset = this.mockData(NB_ITEMS);
+  private initialized = false;
+  getTableData(): ScheduleDataView[] {
+    if (!this.initialized) { this._dataset = this.mockData(NB_ITEMS); this.initialized = true; }
     return this._dataset;
   }
 
   mockData(itemCount: number, startingIndex = 0): ScheduleDataView[] {
-    // mock a dataset
-    const tempDataset = [];
-    for (let i = startingIndex; i < (startingIndex + itemCount); i++) {
-      const flag: boolean = !!randomBetween(0, 1);
-      const tape: string = flag ? 'Кастрля' : 'Чемодан';
-      const barCode = Math.round(Math.random() * 100);
-      const bcp_name: string = 'Пункт за'
-      const randomYear = randomBetween(2000, 2035);
-      const randomYearShort = randomBetween(10, 35);
-      const randomMonth = randomBetween(1, 12);
-      const randomMonthStr = (randomMonth < 10) ? `0${randomMonth}` : randomMonth;
-      const randomDay = randomBetween(10, 28);
-      const randomPercent = randomBetween(0, 100);
-      const randomHour = randomBetween(10, 23);
-      const randomTime = randomBetween(10, 59);
-      const randomMilliseconds = `${randomBetween(1, 9)}${randomBetween(10, 99)}`;
-      const randomIsEffort = (i % 3 === 0);
-
-      tempDataset.push(<ScheduleDataView><unknown>{
-        id: i,
-        title: 'Title ' + i,
-        tape: tape,
-        bar_code: barCode,
-        bcp_name: 'Пункт забора крови № ' + (i % 3 === 0) ? 'Ильича ' + i : i,
-        completed: flag,
-        date_direction: `${randomYear}-${randomMonthStr}-${randomDay}T${randomHour}:${randomTime}:${randomTime}.${randomMilliseconds}Z`,
-        investigation_name: 'Исследование ' + (i ? 'мочи' : 'говна') + ' № ' + i,
-        deviation: i ? 'Болеет' : 'Псих',
-        patient_id: 'Пациент № ' + i,
-        status: (i % 3 === 0) ? 'Жить будет' : 'Неизлечим',
-      });
-    }
-    return tempDataset;
+    return Array.from({length:itemCount}, (_, n) => {
+      const i = startingIndex+n;
+      return {id:i+1, patient_id:`DEMO-${String(i+1).padStart(4,'0')}`,
+        patient_fio:`Демонстрационный участник ${i+1}`,
+        investigation_name:['Общий анализ крови','Биохимический профиль','Анализ образца'][i%3],
+        status:['Запланировано','Образец получен','В обработке','Завершено'][i%4],
+        tape:['Пробирка EDTA','Пробирка с гелем','Контейнер'][i%3],
+        deviation:i%7===0?'Требуется проверка':'Нет', bar_code:`DEMO${String(100000+i)}`,
+        bcp_name:`Демонстрационный пункт № ${i%4+1}`,
+        date_direction:`2026-09-${String(7+i%7).padStart(2,'0')}T${String(8+i%10).padStart(2,'0')}:30:00Z`,
+        completed:i%4===3};
+    });
   }
 
   private _selectedItem: ScheduleDataView | null = null;
@@ -145,8 +121,7 @@ export class BaseTableService implements TableServiceInterface {
 
   onSelectedRowsChanged($event: any) {
     const rows = $event.detail.args.rows;
-    this._selectedItem = this.angularGrid.gridService.getDataItemByRowNumber(rows[0]);
-    debugger;
+    this._selectedItem = rows.length ? this.angularGrid.gridService.getDataItemByRowNumber(rows[0]) : null;
   }
 
   /** Dispatched event of a Grid State Changed event */
@@ -163,18 +138,18 @@ export class BaseTableService implements TableServiceInterface {
     const item: ScheduleDataView | null = this.selectedItem;
     if (item) {
       const alert = await this.alertController.create({
-        header: 'Удаляем чувака по имени ' + (item.patient_fio || '(Нету у него имени)'),
-        subHeader: 'а номер его' + (item.patient_id || '(Нету у него номера)'),
-        message: 'Мочим гада? ',
+        header: 'Удалить демонстрационную запись?',
+        subHeader: item.patient_id,
+        message: 'Изменение затронет только вашу вкладку. Сброс восстановит исходный набор.',
         buttons: [{
-          text: 'Cancel',
+          text: 'Отмена',
           role: 'cancel',
           handler: () => {
             console.log('Alert canceled');
           },
         },
           {
-            text: 'KILL HIM',
+            text: 'Удалить',
             role: 'confirm',
             handler: () => {
               if (this.selectedItem) {
@@ -213,7 +188,7 @@ export class BaseTableService implements TableServiceInterface {
           startTime: new Date(),
           endTime: new Date(),
           itemCount: args && args.current || 0,
-          totalItemCount: this.getTableData().length || 0
+          totalItemCount: this.angularGrid.dataView.getLength()
         };
       });
     }
@@ -221,8 +196,7 @@ export class BaseTableService implements TableServiceInterface {
 
   addItem(opts: { data: ScheduleDataView, refresh: boolean }) {
     const item: ScheduleDataView = {...opts.data};
-    item.id = this._dataset.length + 1;
-    this._dataset.push(item);
+    item.id = Math.max(0, ...this.angularGrid.dataView.getItems().map((row: ScheduleDataView) => row.id)) + 1;
     const rowNumber = this.angularGrid.gridService.addItem(item);
     this.angularGrid.gridService.renderGrid();
     if (rowNumber !== undefined) {

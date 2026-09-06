@@ -10,8 +10,8 @@
 
       <ion-menu-toggle *ngIf="authService.isLoggedIn()">
         <ion-toolbar color="tertiary">
-          <ion-title [routerLink]="[APP_ROUTES.profile_page]">
-            Подтянуть ФИО
+          <ion-title [routerLink]="[APP_ROUTES.schedule_page]">
+            Демонстрационный пользователь
             <p><a [routerLink]="['/login']">Logout</a></p>
           </ion-title>
         </ion-toolbar>
@@ -20,7 +20,7 @@
       <ion-menu-toggle *ngIf="!authService.isLoggedIn()">
         <ion-toolbar color="tertiary">
           <ion-title>
-            Авторизуйся
+            Демонстрационный вход
           </ion-title>
         </ion-toolbar>
       </ion-menu-toggle>
@@ -53,7 +53,7 @@
             <ion-img
               [src]="'assets/icon/lab-service32.png'">
             </ion-img>
-            Настройки проб и контейнеров
+            Настройки проб и контейнеров — вне демо
           </ion-label>
         </ion-menu-toggle>
 
@@ -62,7 +62,7 @@
             <ion-img
               [src]="'assets/icon/book32.png'">
             </ion-img>
-            Справочники
+            Справочники — вне демо
           </ion-label>
         </ion-menu-toggle>
 
@@ -71,7 +71,7 @@
             <ion-img
               [src]="'assets/icon/report32.png'">
             </ion-img>
-            Отчеты
+            Отчеты — вне демо
           </ion-label>
         </ion-menu-toggle>
 
@@ -80,7 +80,7 @@
             <ion-img
               [src]="'assets/icon/technocard-icon.svg'">
             </ion-img>
-            Технологические карты
+            Технологические карты — вне демо
           </ion-label>
         </ion-menu-toggle>
 
@@ -92,6 +92,9 @@
   <!--Page-->
   <div class="ion-page" id="main-content">
     <ion-header>
+      <div class="demo-notice"><strong>Демонстрационный режим: используются моки</strong>
+      <span>Angular, Ionic, таблицы и формы работают в браузере. Данные синтетические, интеграции лаборатории не подключены. Изменения живут только в этой вкладке.</span>
+      <button type="button" (click)="resetDemo()">Сбросить свой пример</button></div>
       <ion-toolbar>
         <ion-menu-toggle [routerLink]="[APP_ROUTES.schedule_page]">
         <ion-buttons slot="start">
@@ -104,7 +107,7 @@
 
 
           <ion-title  *ngIf="authService.isLoggedIn()">АРМ Лаборанта</ion-title>
-          <ion-title  *ngIf="!authService.isLoggedIn()">Авторизуйся, блеать!</ion-title>
+          <ion-title  *ngIf="!authService.isLoggedIn()">Демонстрационный вход</ion-title>
         </ion-menu-toggle>
       </ion-toolbar>
     </ion-header>

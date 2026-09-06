@@ -1,0 +1,8 @@
+FROM node:20.20.1-bookworm@sha256:e391c5561646193be929e3fe55d27234f40a01d867d72b30ae1341b673a3bf4b AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --legacy-peer-deps --no-audit --no-fund
+COPY . .
+RUN npm run build -- --configuration production
+FROM scratch AS artifact
+COPY --from=build /app/www/ /

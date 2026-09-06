@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 export class BasicAuthInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // add authorization header with basic auth credentials if available
-    let currentUser = localStorage.getItem('currentUser') || {};
+    let currentUser = sessionStorage.getItem('currentUser') || {};
     if (typeof currentUser === "string") {
       currentUser = JSON.parse(currentUser);
     }

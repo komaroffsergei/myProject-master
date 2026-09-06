@@ -23,6 +23,8 @@ export class AppComponent {
   public activeTab: string = 'test';
   constructor(private router: Router, protected authService: AuthenticationService) {}
 
+  resetDemo() { sessionStorage.removeItem("currentUser"); window.location.href = "/login"; }
+
   async change(activeTab: string) {
     this.activeTab =  activeTab;
     this.router.navigate([activeTab]);

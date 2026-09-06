@@ -7,7 +7,7 @@ export class AuthenticationService {
   constructor(private http: HttpClient) { }
 
   isLoggedIn() {
-    return !!localStorage.getItem('currentUser');
+    return !!sessionStorage.getItem('currentUser');
   }
 
   login(username: string, password: string) {
@@ -18,7 +18,7 @@ export class AuthenticationService {
           // store user details and basic auth credentials in local storage
           // to keep user logged in between page refreshes
           user.authdata = window.btoa(username + ':' + password);
-          localStorage.setItem('currentUser', JSON.stringify(user));
+          sessionStorage.setItem('currentUser', JSON.stringify(user));
         }
 
         return user;
@@ -27,6 +27,6 @@ export class AuthenticationService {
 
   logout() {
     // remove user from local storage to log user out
-    localStorage.removeItem('currentUser');
+    sessionStorage.removeItem('currentUser');
   }
 }
