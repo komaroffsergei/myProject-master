@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import {filter} from 'rxjs';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, inject } from '@angular/core';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {APP_ROUTES} from "./app-routing.module";
-import {Router} from "@angular/router";
+import {Router, NavigationEnd} from "@angular/router";
 import {AuthenticationService} from "./services";
 
 
@@ -21,7 +23,11 @@ import {AuthenticationService} from "./services";
 
 export class AppComponent {
   public activeTab: string = 'test';
-  constructor(private router: Router, protected authService: AuthenticationService) {}
+  constructor(private router: Router, protected authService: AuthenticationService) {
+    this.router.events.pipe(filter(e=>e instanceof NavigationEnd),takeUntilDestroyed(inject(DestroyRef))).subscribe(e=>{
+      if(window.parent!==window)window.parent.postMessage({type:'ionic-demo-route',url:(e as NavigationEnd).urlAfterRedirects},location.origin);
+    });
+  }
 
   resetDemo() { sessionStorage.removeItem("currentUser"); window.location.href = "/login"; }
 

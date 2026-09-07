@@ -9,7 +9,7 @@
   (onSelectedRowsChanged)="tableService.onSelectedRowsChanged($event)"></app-table>
 <ion-modal trigger="open-create-modal" #newModal (willDismiss)="onWillDismiss($event)"><ng-template>
   <ion-header><ion-toolbar><ion-buttons slot="start"><ion-button (click)="cancel('new')">Отмена</ion-button></ion-buttons>
-  <ion-title>Новая демонстрационная запись</ion-title><ion-buttons slot="end"><ion-button (click)="confirm(newItem, 'new')" [strong]="true">Добавить</ion-button></ion-buttons></ion-toolbar></ion-header>
+  <ion-title>Новая запись</ion-title><ion-buttons slot="end"><ion-button (click)="confirm(newItem, 'new')" [strong]="true">Добавить</ion-button></ion-buttons></ion-toolbar></ion-header>
   <ion-content class="ion-padding"><p>Используйте вымышленные данные. Изменения доступны только в вашей вкладке.</p>
   <ion-note color="danger" role="alert" *ngIf="formError">{{formError}}</ion-note><ng-container *ngIf="newItem">
 <ion-item><ion-input label="Участник (синтетические данные)" labelPlacement="stacked" type="text" [maxlength]="120" [(ngModel)]="newItem.patient_fio"></ion-input></ion-item>
@@ -24,7 +24,7 @@
 <ion-item><ion-checkbox [(ngModel)]="newItem.completed">Завершено</ion-checkbox></ion-item></ng-container></ion-content></ng-template></ion-modal>
 <ion-modal  #editModal (willDismiss)="onWillDismiss($event)"><ng-template>
   <ion-header><ion-toolbar><ion-buttons slot="start"><ion-button (click)="cancel('edit')">Отмена</ion-button></ion-buttons>
-  <ion-title>Редактирование записи</ion-title><ion-buttons slot="end"><ion-button (click)="confirm(editItem, 'edit')" [strong]="true">Сохранить</ion-button></ion-buttons></ion-toolbar></ion-header>
+  <ion-title>Редактирование</ion-title><ion-buttons slot="end"><ion-button (click)="confirm(editItem, 'edit')" [strong]="true">Сохранить</ion-button></ion-buttons></ion-toolbar></ion-header>
   <ion-content class="ion-padding"><p>Используйте вымышленные данные. Изменения доступны только в вашей вкладке.</p>
   <ion-note color="danger" role="alert" *ngIf="formError">{{formError}}</ion-note><ng-container *ngIf="editItem">
 <ion-item><ion-input label="Участник (синтетические данные)" labelPlacement="stacked" type="text" [maxlength]="120" [(ngModel)]="editItem.patient_fio"></ion-input></ion-item>

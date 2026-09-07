@@ -50,6 +50,11 @@ export class SchedulePage implements OnInit {
     this.prepareGrid();
   }
 
+  ionViewDidEnter() {
+    // Ionic finishes the route transition before the grid measures its viewport.
+    this.tableService.angularGrid?.resizerService.resizeGrid();
+  }
+
   prepareGrid() {
     this.gridColumns = this.tableService.getTableColumns();
     this.gridOptions = this.tableService.getTableOptions();
